@@ -1,26 +1,21 @@
 plugins {
-    alias(libs.plugins.android.application)
+    alias(libs.plugins.android.library)
     alias(libs.plugins.compose)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
 }
 
 android {
-    namespace = "com.vegcale.forwantedly"
+    namespace = "com.vegcale.feature.projects"
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.vegcale.forwantedly"
         minSdk = 29
-        targetSdk = 35
-        versionCode = 1
-        versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
+        consumerProguardFiles("consumer-rules.pro")
     }
 
     buildTypes {
@@ -32,6 +27,9 @@ android {
             )
         }
     }
+    buildFeatures {
+        compose = true
+    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -39,12 +37,8 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
-    buildFeatures {
-        compose = true
-    }
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
             excludes += ("META-INF/gradle/incremental.annotation.processors")
         }
     }
@@ -52,12 +46,14 @@ android {
 
 dependencies {
     implementation(project(":core:designsystem"))
-    implementation(project(":feature:projects"))
+    implementation(project(":core:data"))
+    implementation(project(":feature:recruitmentdetail"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 

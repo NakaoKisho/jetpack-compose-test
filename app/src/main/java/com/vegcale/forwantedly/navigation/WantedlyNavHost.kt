@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.vegcale.forwantedly.ui.WantedlyAppState
-import com.vegcale.recruitment.navigation.RecruitmentBaseRoute
-import com.vegcale.recruitment.navigation.recruitmentSection
+import com.vegcale.projects.navigation.RecruitmentBaseRoute
+import com.vegcale.projects.navigation.recruitmentSection
 
 @Composable
 fun WantedlyNavHost(

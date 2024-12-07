@@ -16,10 +16,12 @@ dependencyResolutionManagement {
 rootProject.name = "ForWantedly"
 include(":app")
 include(":feature")
-include(":feature:recruitment")
+include(":feature:projects")
 include(":core")
 include(":core:designsystem")
 include(":feature:recruitmentdetail")
 include(":core:network")
 include(":core:data")
 include(":core:model")
+include(":core:datastore-proto")
+include(":core:datastore")
