@@ -1,5 +1,6 @@
 package com.vegcale.core.network.retrofit
 
+import com.vegcale.core.network.BuildConfig
 import com.vegcale.core.network.WantedlyNetworkDataSource
 import com.vegcale.core.network.model.NetworkProjects
 import kotlinx.serialization.Serializable
@@ -29,13 +30,12 @@ private data class WantedlyResponse<T>(
 internal class RetrofitWantedlyNetwork @Inject constructor(
     networkJson: Json,
 ) : WantedlyNetworkDataSource {
-    private val apiUrl = "https://www.wantedly.com/api" // todo buildconfig
-    private val apiVersion = "/v1" // todo buildconfig
+    private val baseUrl = BuildConfig.API_URL + BuildConfig.API_VERSION
     private val networkApi = Retrofit.Builder()
         .addConverterFactory(
             networkJson.asConverterFactory("application/json".toMediaType())
         )
-        .baseUrl(apiUrl + apiVersion)
+        .baseUrl(baseUrl)
         .build()
         .create(RetrofitWantedlyNetworkApi::class.java)
 

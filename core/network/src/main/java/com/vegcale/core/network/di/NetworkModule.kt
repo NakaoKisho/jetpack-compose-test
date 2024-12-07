@@ -12,15 +12,19 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-abstract class NetworkModule {
+internal object NetworkModule {
     @Provides
     @Singleton
     fun providesNetworkJson(): Json = Json {
         ignoreUnknownKeys = true
     }
+}
 
+@Module
+@InstallIn(SingletonComponent::class)
+internal interface FlavoredNetworkModule {
     @Binds
-    internal abstract fun bindWantedlyNetwork(
+    fun bindWantedlyNetwork(
         wantedlyNetwork: RetrofitWantedlyNetwork
     ): WantedlyNetworkDataSource
 }

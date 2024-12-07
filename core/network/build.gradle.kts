@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.hilt)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.secrets)
 }
 
 android {
@@ -37,13 +39,21 @@ android {
             excludes += ("META-INF/gradle/incremental.annotation.processors")
         }
     }
+
+    buildFeatures {
+        buildConfig = true
+    }
+
+    secrets {
+        defaultPropertiesFileName = "secrets.properties"
+    }
 }
 
 dependencies {
     implementation(libs.retrofit.core)
     implementation(libs.retrofit.kotlin.serialization)
     implementation(libs.hilt.android)
-    implementation(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.okhttp)
 
