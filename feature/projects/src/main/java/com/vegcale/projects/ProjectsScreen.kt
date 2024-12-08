@@ -38,40 +38,115 @@ import com.vegcale.feature.projects.R
 internal fun ProjectsRoute(
     viewModel: ProjectsViewModel = hiltViewModel(),
 ) {
-    val searchResultUiState by viewModel.searchResultUiState.collectAsStateWithLifecycle()
+    val queryUiState by viewModel.queryState.collectAsStateWithLifecycle()
+    val searchUiState by viewModel.searchUiState.collectAsStateWithLifecycle()
 
     ProjectsScreen(
-        searchResultUiState = searchResultUiState,
+        queryUiState = queryUiState,
+        searchUiState = searchUiState,
         updateProjectsQuery = viewModel::updateProjectsQuery,
-        getProjects = viewModel::getProjects,
+        updateProjects = viewModel::updateProjects,
     )
 }
 
 @Composable
 private fun ProjectsScreen(
     modifier: Modifier = Modifier,
-    searchResultUiState: SearchResultUiState = SearchResultUiState.Loading,
+    queryUiState: QueryUiState = QueryUiState.Loading,
+    searchUiState: SearchUiState = SearchUiState.Loading,
     updateProjectsQuery: (String) -> Unit = {},
-    getProjects: (String) -> Unit = {},
+    updateProjects: (String, Int) -> Unit = { _, _ -> },
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
-    SnackBar(
+    QuerySnackBar(
         snackbarHostState = snackbarHostState,
-        searchResultUiState = searchResultUiState,
+        queryUiState = queryUiState,
+    )
+    SearchSnackBar(
+        snackbarHostState = snackbarHostState,
+        searchUiState = searchUiState,
     )
 
-    val currentQuery = if (searchResultUiState is SearchResultUiState.Success) {
-        searchResultUiState.query
+    when (searchUiState) {
+        is SearchUiState.Loading,
+        is SearchUiState.LoadFailed -> Unit
+
+        is SearchUiState.Success ->
+            Body(
+                modifier = modifier,
+                queryUiState = queryUiState,
+                updateProjectsQuery = updateProjectsQuery,
+                updateProjects = updateProjects,
+                snackbarHostState = snackbarHostState,
+                searchUiState = searchUiState,
+            )
+    }
+}
+
+@Composable
+private fun QuerySnackBar(
+    snackbarHostState: SnackbarHostState,
+    queryUiState: QueryUiState,
+) {
+    val errorMessage = stringResource(id = R.string.ui_state_error_message)
+    LaunchedEffect(snackbarHostState) {
+        when (queryUiState) {
+            is QueryUiState.LoadFailed -> {
+                snackbarHostState.showSnackbar(
+                    message = errorMessage
+                )
+            }
+
+            else -> Unit
+        }
+    }
+}
+
+@Composable
+private fun SearchSnackBar(
+    snackbarHostState: SnackbarHostState,
+    searchUiState: SearchUiState,
+) {
+    val errorMessage = stringResource(id = R.string.ui_state_error_message)
+    LaunchedEffect(snackbarHostState) {
+        when (searchUiState) {
+            is SearchUiState.LoadFailed -> {
+                snackbarHostState.showSnackbar(
+                    message = errorMessage
+                )
+            }
+
+            else -> Unit
+        }
+    }
+}
+
+
+@Composable
+private fun Body(
+    modifier: Modifier = Modifier,
+    queryUiState: QueryUiState,
+    updateProjectsQuery: (String) -> Unit,
+    updateProjects: (String, Int) -> Unit,
+    snackbarHostState: SnackbarHostState,
+    searchUiState: SearchUiState.Success,
+) {
+    val currentQuery = if (queryUiState is QueryUiState.Success) {
+        queryUiState.query
     } else {
         ""
     }
+    val projects = searchUiState.projects
+
     Scaffold(
         topBar = {
             WantedlyTopAppBar(
                 currentQuery = currentQuery,
                 onSearch = { query ->
                     updateProjectsQuery(query)
-                    getProjects(query)
+
+                    val pageCount = 1
+                    updateProjects(query, pageCount)
                 },
             )
         },
@@ -88,7 +163,7 @@ private fun ProjectsScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             items(
-                count = 10
+                count = projects.size
             ) {
                 Card(
                     colors = CardDefaults.cardColors(
@@ -123,24 +198,6 @@ private fun ProjectsScreen(
     }
 }
 
-@Composable
-private fun SnackBar(
-    snackbarHostState: SnackbarHostState,
-    searchResultUiState: SearchResultUiState,
-) {
-    val errorMessage = stringResource(id = R.string.ui_state_error_message)
-    LaunchedEffect(snackbarHostState) {
-        when (searchResultUiState) {
-            is SearchResultUiState.LoadFailed -> {
-                snackbarHostState.showSnackbar(
-                    message = errorMessage
-                )
-            }
-
-            else -> Unit
-        }
-    }
-}
 
 @Preview(showBackground = true)
 @Composable
