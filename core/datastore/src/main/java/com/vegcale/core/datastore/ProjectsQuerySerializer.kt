@@ -8,7 +8,7 @@ import java.io.OutputStream
 import javax.inject.Inject
 
 class ProjectsQuerySerializer @Inject constructor() : Serializer<ProjectsQuery> {
-    override val defaultValue = ProjectsQuery.getDefaultInstance()
+    override val defaultValue: ProjectsQuery = ProjectsQuery.getDefaultInstance()
 
     override suspend fun readFrom(input: InputStream): ProjectsQuery {
         try {

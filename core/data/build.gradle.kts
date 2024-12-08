@@ -43,7 +43,10 @@ android {
 dependencies {
     implementation(project(":core:network"))
     implementation(project(":core:model"))
+    api(project(":core:datastore"))
+    api(project(":core:datastore-proto"))
 
+    api(libs.androidx.datastore)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation(libs.kotlinx.serialization.json)

@@ -3,6 +3,8 @@ package com.vegcale.designsystem.component
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.TextField
@@ -17,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.vegcale.core.designsystem.R
@@ -26,10 +29,12 @@ import com.vegcale.designsystem.theme.ForWantedlyTheme
 @Composable
 fun WantedlyTopAppBar(
     modifier: Modifier = Modifier,
+    currentQuery: String,
+    onSearch: (String) -> Unit,
 ) {
     TopAppBar(
         title = {
-            var value by rememberSaveable { mutableStateOf("") }
+            var value by rememberSaveable { mutableStateOf(currentQuery) }
 
             TextField(
                 value = value,
@@ -49,6 +54,12 @@ fun WantedlyTopAppBar(
                         )
                     )
                 },
+                keyboardOptions = KeyboardOptions(
+                    imeAction = ImeAction.Search,
+                ),
+                keyboardActions = KeyboardActions(
+                    onSearch = { onSearch(value) },
+                ),
                 singleLine = true,
                 shape = RoundedCornerShape(
                     size = 16.dp
@@ -71,6 +82,9 @@ fun WantedlyTopAppBar(
 @Composable
 private fun WantedlyTopAppBarPreview() {
     ForWantedlyTheme {
-        WantedlyTopAppBar()
+        WantedlyTopAppBar(
+            currentQuery = "",
+            onSearch = {}
+        )
     }
 }

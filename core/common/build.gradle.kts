@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.vegcale.core.datastore"
+    namespace = "com.vegcale.core.common"
     compileSdk = 35
 
     defaultConfig {
@@ -16,16 +16,15 @@ android {
         consumerProguardFiles("consumer-rules.pro")
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
     }
 }
 
 dependencies {
-    api(project(":core:common"))
-    api(project(":core:datastore-proto"))
-
-    api(libs.androidx.datastore)
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 }

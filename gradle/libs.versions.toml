@@ -21,6 +21,7 @@ protobufPlugin = "0.9.4"
 retrofit = "2.11.0"
 secrets = "2.0.1"
 uiTooling = "1.7.5"
+uiDesktop = "1.7.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }

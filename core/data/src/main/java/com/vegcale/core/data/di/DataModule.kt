@@ -1,5 +1,7 @@
 package com.vegcale.core.data.di
 
+import com.vegcale.core.data.repository.ProjectsQueryRepository
+import com.vegcale.core.data.repository.ProjectsQueryRepositoryImpl
 import com.vegcale.core.data.repository.ProjectsRepository
 import com.vegcale.core.data.repository.ProjectsRepositoryImpl
 import dagger.Binds
@@ -14,4 +16,9 @@ abstract class DataModule {
     internal abstract fun bindsProjectsRepository(
         projectsRepositoryImpl: ProjectsRepositoryImpl
     ): ProjectsRepository
+
+    @Binds
+    internal abstract fun bindsProjectsQueryRepository(
+        projectsQueryRepositoryImpl: ProjectsQueryRepositoryImpl
+    ): ProjectsQueryRepository
 }
