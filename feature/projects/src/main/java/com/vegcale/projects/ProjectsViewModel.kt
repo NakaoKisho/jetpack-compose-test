@@ -1,5 +1,6 @@
 package com.vegcale.projects
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.vegcale.core.data.repository.ProjectsQueryRepository
@@ -26,7 +27,10 @@ class ProjectsViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
     private val projectsQueryRepository: ProjectsQueryRepository,
 ) : ViewModel() {
+    private val tag = "ProjectsViewModel"
+    private var _pageNo = 1
     val searchUiState: MutableStateFlow<SearchUiState> = MutableStateFlow(SearchUiState.Loading)
+    val pageNo = _pageNo
 
     val queryState: StateFlow<QueryUiState> =
         projectsQueryRepository
@@ -46,6 +50,10 @@ class ProjectsViewModel @Inject constructor(
                 initialValue = QueryUiState.Loading,
             )
 
+    fun updatePageNo(pageNo: Int) {
+        _pageNo = pageNo
+    }
+
     fun updateProjects(query: String, pageCount: Int) {
         viewModelScope.launch {
             searchUiState.update {
@@ -55,6 +63,7 @@ class ProjectsViewModel @Inject constructor(
                         projects = projects,
                     )
                 } catch (e: Exception) {
+                    Log.e(tag, e.toString())
                     SearchUiState.LoadFailed
                 }
             }

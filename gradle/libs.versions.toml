@@ -6,6 +6,8 @@ androidxEspresso = "3.6.1"
 androidxHiltNavigationCompose = "1.2.0"
 androidxTestExt = "1.2.1"
 androidxTestExtJunit = "1.2.1"
+coilCompose = "3.0.4"
+coilNetworkOkhttp = "3.0.4"
 coreKtx = "1.15.0"
 datastore = "1.1.1"
 hilt = "2.53"
@@ -21,7 +23,6 @@ protobufPlugin = "0.9.4"
 retrofit = "2.11.0"
 secrets = "2.0.1"
 uiTooling = "1.7.5"
-uiDesktop = "1.7.0"
 
 [libraries]
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
@@ -42,6 +43,8 @@ androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espres
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }

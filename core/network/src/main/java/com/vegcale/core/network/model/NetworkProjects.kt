@@ -63,9 +63,9 @@ data class NetworkProjects(
     val supported: Boolean,
 
     @SerialName("can_apply")
-    val canApply: Boolean,
+    val canApply: Boolean? = false,
 
-    val applied: Boolean,
+    val applied: Boolean? = false,
 
     @SerialName("can_bookmark")
     val canBookmark: Boolean,
@@ -169,7 +169,7 @@ data class NetworkProjectsCompanyAvatar(
 @Serializable
 data class NetworkProjectsStaff(
     @SerialName("user_id")
-    val userId: Int,
+    val userId: Long,
 
     @SerialName("is_leader")
     val isLeader: Boolean,
@@ -177,9 +177,9 @@ data class NetworkProjectsStaff(
     val name: String,
 
     @SerialName("facebook_uid")
-    val facebookUid: Int?,
+    val facebookUid: Long?,
 
-    val description: String,
+    val description: String?,
 )
 
 @Serializable
@@ -191,6 +191,5 @@ data class NetworkProjectsLeader(
     val nameEn: String?,
 
     @SerialName("facebook_uid")
-    val facebookUid: String?,
-
+    val facebookUid: Long?,
 )

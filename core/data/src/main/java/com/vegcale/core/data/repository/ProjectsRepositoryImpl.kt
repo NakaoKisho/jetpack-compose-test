@@ -12,7 +12,10 @@ internal class ProjectsRepositoryImpl @Inject constructor(
 
         return rawProjects.map { project ->
             Projects(
-                id = project.id
+                id = project.id,
+                title = project.title,
+                image = project.image.original,
+                companyName = project.company.name,
             )
         }
     }

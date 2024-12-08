@@ -1,7 +1,6 @@
 package com.vegcale.projects
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,8 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Scaffold
@@ -30,6 +27,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
+import com.vegcale.core.model.Projects
 import com.vegcale.designsystem.component.WantedlyTopAppBar
 import com.vegcale.designsystem.theme.ForWantedlyTheme
 import com.vegcale.feature.projects.R
@@ -46,6 +45,8 @@ internal fun ProjectsRoute(
         searchUiState = searchUiState,
         updateProjectsQuery = viewModel::updateProjectsQuery,
         updateProjects = viewModel::updateProjects,
+        pageNo = viewModel.pageNo,
+        updatePageNo = viewModel::updatePageNo,
     )
 }
 
@@ -56,6 +57,8 @@ private fun ProjectsScreen(
     searchUiState: SearchUiState = SearchUiState.Loading,
     updateProjectsQuery: (String) -> Unit = {},
     updateProjects: (String, Int) -> Unit = { _, _ -> },
+    pageNo: Int = 1,
+    updatePageNo: (Int) -> Unit = {},
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     QuerySnackBar(
@@ -67,19 +70,50 @@ private fun ProjectsScreen(
         searchUiState = searchUiState,
     )
 
-    when (searchUiState) {
-        is SearchUiState.Loading,
-        is SearchUiState.LoadFailed -> Unit
+    LaunchedEffect(key1 = queryUiState) {
+        when (queryUiState) {
+            is QueryUiState.Success -> {
+                updateProjects(
+                    queryUiState.query,
+                    pageNo
+                )
+            }
 
-        is SearchUiState.Success ->
-            Body(
-                modifier = modifier,
-                queryUiState = queryUiState,
-                updateProjectsQuery = updateProjectsQuery,
-                updateProjects = updateProjects,
-                snackbarHostState = snackbarHostState,
-                searchUiState = searchUiState,
+            else -> Unit
+        }
+    }
+
+    val currentQuery = if (queryUiState is QueryUiState.Success) {
+        queryUiState.query
+    } else {
+        ""
+    }
+
+    Scaffold(
+        topBar = {
+            WantedlyTopAppBar(
+                currentQuery = currentQuery,
+                onSearch = { query ->
+                    updateProjectsQuery(query)
+                    val firstPageNo = 1
+                    updatePageNo(firstPageNo)
+                    updateProjects(query, pageNo)
+                },
             )
+        },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
+    ) { paddingValues ->
+        when (searchUiState) {
+            is SearchUiState.Loading,
+            is SearchUiState.LoadFailed -> Unit
+
+            is SearchUiState.Success ->
+                ProjectList(
+                    modifier = modifier,
+                    paddingValues = paddingValues,
+                    projects = searchUiState.projects,
+                )
+        }
     }
 }
 
@@ -123,74 +157,51 @@ private fun SearchSnackBar(
 
 
 @Composable
-private fun Body(
+private fun ProjectList(
     modifier: Modifier = Modifier,
-    queryUiState: QueryUiState,
-    updateProjectsQuery: (String) -> Unit,
-    updateProjects: (String, Int) -> Unit,
-    snackbarHostState: SnackbarHostState,
-    searchUiState: SearchUiState.Success,
+    paddingValues: PaddingValues,
+    projects: List<Projects>,
 ) {
-    val currentQuery = if (queryUiState is QueryUiState.Success) {
-        queryUiState.query
-    } else {
-        ""
-    }
-    val projects = searchUiState.projects
+    LazyColumn(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(paddingValues),
+        contentPadding = PaddingValues(
+            all = 10.dp
+        ),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        items(
+            count = projects.size
+        ) { index ->
+            val project = projects[index]
 
-    Scaffold(
-        topBar = {
-            WantedlyTopAppBar(
-                currentQuery = currentQuery,
-                onSearch = { query ->
-                    updateProjectsQuery(query)
-
-                    val pageCount = 1
-                    updateProjects(query, pageCount)
-                },
-            )
-        },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
-    ) { paddingValues ->
-        LazyColumn(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(paddingValues),
-            contentPadding = PaddingValues(
-                horizontal = 10.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            items(
-                count = projects.size
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = Color.White
+                ),
+                border = BorderStroke(
+                    width = 1.dp,
+                    color = Color.LightGray
+                ),
             ) {
-                Card(
-                    colors = CardDefaults.cardColors(
-                        containerColor = Color.White
-                    ),
-                    border = BorderStroke(
-                        width = 1.dp,
-                        color = Color.LightGray
-                    ),
-                ) {
-                    Box {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(
-                                    all = 8.dp
-                                )
-                        ) {
-                            Image(
-                                imageVector = Icons.Default.Add,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .fillMaxWidth()
+                Box {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                all = 8.dp
                             )
-                            Text(text = "title")
-                            Text(text = "company name")
-                        }
+                    ) {
+                        AsyncImage(
+                            model = project.image,
+                            contentDescription = "",
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                        )
+                        Text(text = project.companyName)
+                        Text(text = project.title)
                     }
                 }
             }
