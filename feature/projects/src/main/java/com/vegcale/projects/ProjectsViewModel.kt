@@ -48,11 +48,11 @@ class ProjectsViewModel @Inject constructor(
         _pageNo = pageNo
     }
 
-    fun updateProjects(query: String, pageCount: Int) {
+    fun updateProjects(query: String, pageNo: Int) {
         viewModelScope.launch {
             searchUiState.update {
                 try {
-                    val projects = projectsRepository.getProjects(query, pageCount)
+                    val projects = projectsRepository.getProjects(query, pageNo)
                     SearchUiState.Success(
                         projects = projects,
                     )

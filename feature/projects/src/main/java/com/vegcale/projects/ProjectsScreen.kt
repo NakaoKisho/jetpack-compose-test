@@ -10,14 +10,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -115,6 +118,10 @@ private fun ProjectsScreen(
             is SearchUiState.Success ->
                 ProjectList(
                     modifier = modifier,
+                    currentQuery = currentQuery,
+                    pageNo = pageNo,
+                    updatePageNo = updatePageNo,
+                    updateProjects = updateProjects,
                     paddingValues = paddingValues,
                     projects = searchUiState.projects,
                     onProjectClick = onProjectClick,
@@ -165,14 +172,31 @@ private fun SearchSnackBar(
 @Composable
 private fun ProjectList(
     modifier: Modifier = Modifier,
+    currentQuery: String,
+    pageNo: Int,
+    updatePageNo: (Int) -> Unit = {},
+    updateProjects: (String, Int) -> Unit = { _, _ -> },
     paddingValues: PaddingValues,
     projects: List<Projects>,
     onProjectClick: (Int) -> Unit,
 ) {
+    val lazyListState = rememberLazyListState()
+    val readyToCheckUpdate by remember {
+        derivedStateOf {
+            lazyListState.firstVisibleItemIndex > 5
+        }
+    }
+    if (readyToCheckUpdate && !lazyListState.canScrollForward) {
+        val nextPageNo = pageNo + 1
+        updatePageNo(nextPageNo)
+        updateProjects(currentQuery, nextPageNo)
+    }
+
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
             .padding(paddingValues),
+        state = lazyListState,
         contentPadding = PaddingValues(
             all = 10.dp
         ),
@@ -223,6 +247,10 @@ private fun ProjectList(
                     }
                 }
             }
+        }
+
+        item {
+            CircularProgressIndicator()
         }
     }
 }
