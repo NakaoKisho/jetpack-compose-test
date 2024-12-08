@@ -1,6 +1,7 @@
 package com.vegcale.projects
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,11 +32,13 @@ import coil3.compose.AsyncImage
 import com.vegcale.core.model.Projects
 import com.vegcale.designsystem.component.WantedlyTopAppBar
 import com.vegcale.designsystem.theme.ForWantedlyTheme
+import com.vegcale.designsystem.theme.Typography
 import com.vegcale.feature.projects.R
 
 @Composable
 internal fun ProjectsRoute(
     viewModel: ProjectsViewModel = hiltViewModel(),
+    onProjectClick: (Int) -> Unit,
 ) {
     val queryUiState by viewModel.queryState.collectAsStateWithLifecycle()
     val searchUiState by viewModel.searchUiState.collectAsStateWithLifecycle()
@@ -47,6 +50,7 @@ internal fun ProjectsRoute(
         updateProjects = viewModel::updateProjects,
         pageNo = viewModel.pageNo,
         updatePageNo = viewModel::updatePageNo,
+        onProjectClick = onProjectClick,
     )
 }
 
@@ -59,6 +63,7 @@ private fun ProjectsScreen(
     updateProjects: (String, Int) -> Unit = { _, _ -> },
     pageNo: Int = 1,
     updatePageNo: (Int) -> Unit = {},
+    onProjectClick: (Int) -> Unit = {},
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     QuerySnackBar(
@@ -112,6 +117,7 @@ private fun ProjectsScreen(
                     modifier = modifier,
                     paddingValues = paddingValues,
                     projects = searchUiState.projects,
+                    onProjectClick = onProjectClick,
                 )
         }
     }
@@ -161,6 +167,7 @@ private fun ProjectList(
     modifier: Modifier = Modifier,
     paddingValues: PaddingValues,
     projects: List<Projects>,
+    onProjectClick: (Int) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier
@@ -178,6 +185,9 @@ private fun ProjectList(
             val project = projects[index]
 
             Card(
+                modifier = Modifier.clickable {
+                    onProjectClick(project.id)
+                },
                 colors = CardDefaults.cardColors(
                     containerColor = Color.White
                 ),
@@ -200,8 +210,16 @@ private fun ProjectList(
                             modifier = Modifier
                                 .fillMaxWidth(),
                         )
-                        Text(text = project.companyName)
-                        Text(text = project.title)
+
+                        Text(
+                            text = project.title,
+                            style = Typography.titleLarge,
+                        )
+
+                        Text(
+                            text = project.companyName,
+                            style = Typography.bodyMedium,
+                        )
                     }
                 }
             }

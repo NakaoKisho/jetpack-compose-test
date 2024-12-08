@@ -1,4 +1,4 @@
-package com.vegcale.recruitmentdetail
+package com.vegcale.projectdetail
 
 import org.junit.Test
 

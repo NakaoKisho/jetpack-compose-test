@@ -4,8 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import com.vegcale.forwantedly.ui.WantedlyAppState
-import com.vegcale.projects.navigation.RecruitmentBaseRoute
-import com.vegcale.projects.navigation.recruitmentSection
+import com.vegcale.projectdetail.navigation.navigateToProjectDetail
+import com.vegcale.projects.navigation.ProjectBaseRoute
+import com.vegcale.projects.navigation.projectSection
 
 @Composable
 fun WantedlyNavHost(
@@ -16,9 +17,11 @@ fun WantedlyNavHost(
 
     NavHost(
         navController = navController,
-        startDestination = RecruitmentBaseRoute,
+        startDestination = ProjectBaseRoute,
         modifier = modifier,
     ) {
-        recruitmentSection()
+        projectSection(
+            onProjectClick = navController::navigateToProjectDetail,
+        )
     }
 }

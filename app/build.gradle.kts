@@ -53,6 +53,7 @@ android {
 dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":feature:projects"))
+    implementation(project(":feature:project-detail"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)

@@ -16,12 +16,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-sealed interface SearchUiState {
-    data object Loading: SearchUiState
-    data object LoadFailed: SearchUiState
-    data class Success(val projects: List<Projects>): SearchUiState
-}
-
 @HiltViewModel
 class ProjectsViewModel @Inject constructor(
     private val projectsRepository: ProjectsRepository,
@@ -75,4 +69,10 @@ class ProjectsViewModel @Inject constructor(
             projectsQueryRepository.updateProjectsQuery(query)
         }
     }
+}
+
+sealed interface SearchUiState {
+    data object Loading: SearchUiState
+    data object LoadFailed: SearchUiState
+    data class Success(val projects: List<Projects>): SearchUiState
 }

@@ -48,7 +48,7 @@ dependencies {
     implementation(project(":core:designsystem"))
     implementation(project(":core:data"))
     implementation(project(":core:model"))
-    implementation(project(":feature:recruitmentdetail"))
+    implementation(project(":feature:project-detail"))
 
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.core.ktx)
